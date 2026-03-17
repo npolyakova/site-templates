@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сокращатель ссылок для агентства</title>
+    <style>
+        /* styles.css — встроен для удобства */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0b7285 0%, #0c8599 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            margin: 20px auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0b7285 0%, #0c8599 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        .content {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .shortener-section {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .shortener-section h2 {
+            color: #0b7285;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: all 0.3s;
+            min-width: 280px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #0b7285;
+            box-shadow: 0 0 0 3px rgba(11,114,133,0.1);
+        }
+
+        .input-group input::placeholder {
+            color: #adb5bd;
+        }
+
+        .input-group button {
+            padding: 15px 35px;
+            background: #0b7285;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 6px rgba(11,114,133,0.2);
+        }
+
+        .input-group button:hover {
+            background: #0c8599;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(11,114,133,0.3);
+        }
+
+        .input-group button:active {
+            transform: translateY(0);
+        }
+
+        .input-group button:disabled {
+            background: #adb5bd;
+            transform: none;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .url-examples {
+            margin-top: 15px;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .url-examples span {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin: 5px 5px 0 0;
+            color: #495057;
+        }
+
+        .result-section {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+            margin-bottom: 30px;
+        }
+
+        .result-header {
+            padding: 20px 25px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .result-header h3 {
+            color: #495057;
+            font-size: 1.1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-content {
+            padding: 25px;
+        }
+
+        .short-url-card {
+            background: #e7f5ff;
+            border: 2px dashed #0b7285;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .short-url-display {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #0b7285;
+            word-break: break-all;
+            margin-bottom: 15px;
+        }
+
+        .short-url-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .short-url-actions button {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95em;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .copy-btn {
+            background: #0b7285;
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background: #0c8599;
+            transform: translateY(-2px);
+        }
+
+        .copy-btn.copied {
+            background: #37b24d;
+        }
+
+        .open-btn {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .open-btn:hover {
+            background: #dee2e6;
+            transform: translateY(-2px);
+        }
+
+        .stats-section {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .stats-header {
+            padding: 20px 25px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stats-header h3 {
+            color: #495057;
+            font-size: 1.1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-btn {
+            padding: 8px 20px;
+            background: #0b7285;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-btn:hover:not(:disabled) {
+            background: #0c8599;
+            transform: translateY(-2px);
+        }
+
+        .refresh-btn:disabled {
+            background: #adb5bd;
+            cursor: not-allowed;
+        }
+
+        .urls-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .url-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 25px;
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.2s;
+            animation: slideIn 0.3s ease;
+        }
+
+        .url-item:hover {
+            background: #f8f9fa;
+        }
+
+        .url-item:last-child {
+            border-bottom: none;
+        }
+
+        .url-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .url-info .short {
+            font-weight: 600;
+            color: #0b7285;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .url-info .short a {
+            color: #0b7285;
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+
+        .url-info .short a:hover {
+            text-decoration: underline;
+        }
+
+        .url-info .original {
+            color: #6c757d;
+            font-size: 0.85em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 400px;
+        }
+
+        .url-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #6c757d;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+
+        .url-stats .clicks {
+            background: #e9ecef;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #adb5bd;
+        }
+
+        .empty-state p {
+            margin-bottom: 10px;
+        }
+
+        .empty-state .hint {
+            font-size: 0.9em;
+            color: #0b7285;
+            background: #e7f5ff;
+            padding: 8px 16px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #0b7285;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-left: 8px;
+            border: 2px solid #0b7285;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 30px;
+            color: #e53e3e;
+            background: #fff5f5;
+            border-radius: 8px;
+            margin: 20px;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 15px;
+            color: #2b8c3e;
+            background: #d3f9d8;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .content {
+                padding: 20px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .input-group button {
+                width: 100%;
+            }
+
+            .url-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .url-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .original {
+                max-width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <span>🔗</span>
+                Сокращатель ссылок
+            </h1>
+            <p>Превращайте длинные URL в короткие и удобные для отслеживания</p>
+        </div>
+
+        <div class="content">
+            <!-- Основная форма сокращения -->
+            <div class="shortener-section">
+                <h2>
+                    <span>✂️</span>
+                    Вставьте длинную ссылку
+                </h2>
+                <div class="input-group">
+                    <input
+                        type="url"
+                        id="longUrlInput"
+                        placeholder="https://example.com/very-long-path-with-many-parameters?utm_source=..."
+                        value=""
+                    >
+                    <button id="shortenBtn">
+                        <span>🔗</span>
+                        Сократить
+                    </button>
+                </div>
+                <div class="url-examples">
+                    <span>google.com</span>
+                    <span>github.com/username/repo</span>
+                    <span>habr.com/ru/articles/123456</span>
+                </div>
+            </div>
+
+            <!-- Результат сокращения -->
+            <div id="resultSection" class="result-section" style="display: none;">
+                <div class="result-header">
+                    <h3>
+                        <span>✨</span>
+                        Готово! Ваша короткая ссылка
+                    </h3>
+                </div>
+                <div class="result-content">
+                    <div class="short-url-card">
+                        <div id="shortUrlDisplay" class="short-url-display"></div>
+                        <div class="short-url-actions">
+                            <button id="copyUrlBtn" class="copy-btn">
+                                <span>📋</span>
+                                Копировать
+                            </button>
+                            <button id="openUrlBtn" class="open-btn">
+                                <span>↗️</span>
+                                Открыть
+                            </button>
+                        </div>
+                    </div>
+                    <div id="successMessage" class="success-message" style="display: none;">
+                        ✓ Скопировано в буфер обмена!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Статистика и список ссылок -->
+            <div class="stats-section">
+                <div class="stats-header">
+                    <h3>
+                        <span>📊</span>
+                        Недавние ссылки
+                    </h3>
+                    <button id="refreshStatsBtn" class="refresh-btn">
+                        <span>🔄</span>
+                        Обновить
+                    </button>
+                </div>
+
+                <!-- Контейнер для списка ссылок -->
+                <div id="urlsContainer">
+                    <div class="empty-state">
+                        <p>🔗 Здесь появятся ваши сокращённые ссылки</p>
+                        <div class="hint">Вставьте длинную ссылку выше и нажмите "Сократить"</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // app.js — встроен для удобства
+        (function() {
+            // ============================================
+            // TODO: Замените на адрес вашего API
+            const API_BASE_URL = 'http://your-server.com/api';
+            // Базовый URL вашего сайта (для формирования коротких ссылок)
+            const SITE_URL = 'http://your-server.com';
+            // ============================================
+
+            // Элементы DOM
+            const longUrlInput = document.getElementById('longUrlInput');
+            const shortenBtn = document.getElementById('shortenBtn');
+            const resultSection = document.getElementById('resultSection');
+            const shortUrlDisplay = document.getElementById('shortUrlDisplay');
+            const copyUrlBtn = document.getElementById('copyUrlBtn');
+            const openUrlBtn = document.getElementById('openUrlBtn');
+            const successMessage = document.getElementById('successMessage');
+            const refreshStatsBtn = document.getElementById('refreshStatsBtn');
+            const urlsContainer = document.getElementById('urlsContainer');
+
+            // Состояние приложения
+            let lastShortUrl = '';
+            let lastShortCode = '';
+
+            // Инициализация
+            function init() {
+                // Загружаем список ссылок при старте
+                loadUrls();
+
+                // Обработчики событий
+                shortenBtn.addEventListener('click', handleShorten);
+                refreshStatsBtn.addEventListener('click', () => loadUrls());
+                copyUrlBtn.addEventListener('click', copyToClipboard);
+                openUrlBtn.addEventListener('click', openShortUrl);
+
+                // Обработка Enter в поле ввода
+                longUrlInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !shortenBtn.disabled) {
+                        handleShorten();
+                    }
+                });
+
+                // Автоматически скрываем сообщение об успехе через 3 секунды
+                successMessage.addEventListener('transitionend', () => {
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                });
+            }
+
+            // Валидация URL
+            function isValidUrl(string) {
+                try {
+                    new URL(string);
+                    return true;
+                } catch (_) {
+                    return false;
+                }
+            }
+
+            // Нормализация URL (добавляем https:// если нет протокола)
+            function normalizeUrl(url) {
+                url = url.trim();
+                if (!url) return '';
+
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    return 'https://' + url;
+                }
+                return url;
+            }
+
+            // Обработка сокращения ссылки
+            async function handleShorten() {
+                let longUrl = longUrlInput.value.trim();
+
+                if (!longUrl) {
+                    alert('Введите URL для сокращения');
+                    return;
+                }
+
+                // Нормализуем URL
+                longUrl = normalizeUrl(longUrl);
+
+                if (!isValidUrl(longUrl)) {
+                    alert('Пожалуйста, введите корректный URL');
+                    return;
+                }
+
+                // Блокируем кнопку на время запроса
+                shortenBtn.disabled = true;
+                const originalText = shortenBtn.innerHTML;
+                shortenBtn.innerHTML = '<span>⏳</span> Сокращаем...';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/shorten`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            url: longUrl
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ошибка ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    // Предполагаем, что API возвращает { short_code: "abc123", short_url: "http://..." }
+                    const shortCode = data.short_code || data.code;
+                    const shortUrl = data.short_url || `${SITE_URL}/${shortCode}`;
+
+                    lastShortCode = shortCode;
+                    lastShortUrl = shortUrl;
+
+                    // Показываем результат
+                    shortUrlDisplay.textContent = shortUrl;
+                    resultSection.style.display = 'block';
+
+                    // Очищаем поле ввода
+                    longUrlInput.value = '';
+
+                    // Обновляем список ссылок
+                    await loadUrls();
+
+                    // Прокручиваем к результату
+                    resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                } catch (error) {
+                    console.error('Ошибка сокращения ссылки:', error);
+
+                    // Если API недоступен, имитируем успешное сокращение
+                    if (API_BASE_URL === 'http://your-server.com/api') {
+                        // Генерируем случайный код
+                        const mockCode = Math.random().toString(36).substring(2, 8);
+                        const mockShortUrl = `${window.location.origin}/${mockCode}`;
+
+                        lastShortCode = mockCode;
+                        lastShortUrl = mockShortUrl;
+
+                        shortUrlDisplay.textContent = mockShortUrl;
+                        resultSection.style.display = 'block';
+
+                        // Добавляем в список
+                        addMockUrl(longUrl, mockCode);
+
+                        longUrlInput.value = '';
+                    } else {
+                        alert(`Ошибка: ${error.message}`);
+                    }
+                } finally {
+                    shortenBtn.disabled = false;
+                    shortenBtn.innerHTML = originalText;
+                }
+            }
+
+            // Загрузка списка ссылок
+            async function loadUrls() {
+                // Показываем загрузку
+                urlsContainer.innerHTML = '<div class="loading">Загрузка ссылок</div>';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/urls`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ошибка ${response.status}`);
+                    }
+
+                    const urls = await response.json();
+                    renderUrls(urls);
+
+                } catch (error) {
+                    console.error('Ошибка загрузки ссылок:', error);
+
+                    // Для демонстрации показываем тестовые данные
+                    if (API_BASE_URL === 'http://your-server.com/api') {
+                        showMockUrls();
+                    } else {
+                        urlsContainer.innerHTML = `
+                            <div class="error-message">
+                                ❌ Ошибка загрузки ссылок: ${error.message}<br>
+                                <small>Проверьте адрес API и доступность сервера</small>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            // Отрисовка списка ссылок
+            function renderUrls(urls) {
+                if (!urls || urls.length === 0) {
+                    urlsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <p>🔗 Пока нет сокращённых ссылок</p>
+                            <div class="hint">Создайте первую ссылку выше</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const urlsList = document.createElement('ul');
+                urlsList.className = 'urls-list';
+
+                urls.forEach(item => {
+                    const urlItem = document.createElement('li');
+                    urlItem.className = 'url-item';
+
+                    const shortUrl = item.short_url || `${SITE_URL}/${item.short_code}`;
+                    const originalUrl = item.original_url || item.long_url || item.url;
+                    const clicks = item.clicks || 0;
+                    const createdAt = item.created_at ? new Date(item.created_at).toLocaleString() : 'только что';
+
+                    urlItem.innerHTML = `
+                        <div class="url-info">
+                            <div class="short">
+                                <a href="${shortUrl}" target="_blank" title="Открыть короткую ссылку">${shortUrl}</a>
+                                <button class="copy-short-btn" data-url="${shortUrl}" title="Копировать">📋</button>
+                            </div>
+                            <div class="original" title="${originalUrl}">${originalUrl}</div>
+                        </div>
+                        <div class="url-stats">
+                            <span class="clicks" title="Количество переходов">👁 ${clicks}</span>
+                            <span title="Дата создания">📅 ${createdAt}</span>
+                        </div>
+                    `;
+
+                    // Обработчик для копирования короткой ссылки
+                    const copyBtn = urlItem.querySelector('.copy-short-btn');
+                    copyBtn.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        const url = copyBtn.dataset.url;
+
+                        try {
+                            await navigator.clipboard.writeText(url);
+
+                            // Визуальный фидбек
+                            const originalText = copyBtn.textContent;
+                            copyBtn.textContent = '✓';
+                            setTimeout(() => {
+                                copyBtn.textContent = originalText;
+                            }, 1000);
+
+                        } catch (err) {
+                            alert('Не удалось скопировать ссылку');
+                        }
+                    });
+
+                    urlsList.appendChild(urlItem);
+                });
+
+                urlsContainer.innerHTML = '';
+                urlsContainer.appendChild(urlsList);
+            }
+
+            // Копирование в буфер обмена
+            async function copyToClipboard() {
+                if (!lastShortUrl) return;
+
+                try {
+                    await navigator.clipboard.writeText(lastShortUrl);
+
+                    // Показываем сообщение об успехе
+                    successMessage.style.display = 'block';
+
+                    // Меняем иконку кнопки временно
+                    const originalText = copyUrlBtn.innerHTML;
+                    copyUrlBtn.innerHTML = '<span>✓</span> Скопировано';
+                    copyUrlBtn.classList.add('copied');
+
+                    setTimeout(() => {
+                        copyUrlBtn.innerHTML = originalText;
+                        copyUrlBtn.classList.remove('copied');
+                    }, 2000);
+
+                } catch (err) {
+                    alert('Не удалось скопировать ссылку');
+                }
+            }
+
+            // Открыть короткую ссылку
+            function openShortUrl() {
+                if (!lastShortUrl) return;
+                window.open(lastShortUrl, '_blank');
+            }
+
+            // Добавить тестовую ссылку (для демо)
+            function addMockUrl(longUrl, shortCode) {
+                const mockUrl = {
+                    short_code: shortCode,
+                    short_url: `${window.location.origin}/${shortCode}`,
+                    original_url: longUrl,
+                    clicks: Math.floor(Math.random() * 10),
+                    created_at: new Date().toISOString()
+                };
+
+                // Получаем текущие ссылки
+                const currentUrls = [];
+                const existingItems = urlsContainer.querySelectorAll('.url-item');
+
+                existingItems.forEach(item => {
+                    const shortLink = item.querySelector('.short a')?.textContent;
+                    const original = item.querySelector('.original')?.getAttribute('title');
+                    const clicks = item.querySelector('.clicks')?.textContent.replace('👁 ', '');
+
+                    if (shortLink && original) {
+                        currentUrls.push({
+                            short_url: shortLink,
+                            original_url: original,
+                            clicks: parseInt(clicks) || 0
+                        });
+                    }
+                });
+
+                // Добавляем новую
+                currentUrls.unshift(mockUrl);
+
+                // Ограничиваем до 10
+                if (currentUrls.length > 10) currentUrls.pop();
+
+                renderUrls(currentUrls);
+            }
+
+            // Демо-ссылки для тестирования без API
+            function showMockUrls() {
+                const mockUrls = [
+                    {
+                        short_code: 'github',
+                        short_url: `${window.location.origin}/github`,
+                        original_url: 'https://github.com/features/copilot',
+                        clicks: 42,
+                        created_at: new Date(Date.now() - 3600000).toISOString()
+                    },
+                    {
+                        short_code: 'docs123',
+                        short_url: `${window.location.origin}/docs123`,
+                        original_url: 'https://docs.google.com/document/d/very-long-id-here/edit',
+                        clicks: 17,
+                        created_at: new Date(Date.now() - 86400000).toISOString()
+                    },
+                    {
+                        short_code: 'figma',
+                        short_url: `${window.location.origin}/figma`,
+                        original_url: 'https://www.figma.com/file/abcdefg/Project-Name?node-id=0%3A1',
+                        clicks: 8,
+                        created_at: new Date(Date.now() - 172800000).toISOString()
+                    },
+                    {
+                        short_code: 'meet',
+                        short_url: `${window.location.origin}/meet`,
+                        original_url: 'https://meet.google.com/abc-defg-hij',
+                        clicks: 3,
+                        created_at: new Date(Date.now() - 259200000).toISOString()
+                    }
+                ];
+
+                renderUrls(mockUrls);
+
+                // Показываем подсказку
+                const mockNotice = document.createElement('div');
+                mockNotice.style.padding = '10px 20px';
+                mockNotice.style.background = '#e7f5ff';
+                mockNotice.style.color = '#0b7285';
+                mockNotice.style.fontSize = '0.9em';
+                mockNotice.style.textAlign = 'center';
+                mockNotice.style.borderBottom = '1px solid #d0ebff';
+                mockNotice.innerHTML = '⚡ Демо-режим: показаны тестовые ссылки. Настройте API для реальной работы.';
+
+                urlsContainer.prepend(mockNotice);
+            }
+
+            // Запуск инициализации
+            document.addEventListener('DOMContentLoaded', init);
+        })();
+    </script>
+</body>
+</html>

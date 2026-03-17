@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Менеджер задач для агентства</title>
+    <style>
+        /* styles.css — встроен для удобства */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            margin: 20px auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        .content {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .api-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .api-section label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 500;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .api-input-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .api-input-group input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 0.95em;
+            transition: all 0.3s;
+            min-width: 250px;
+        }
+
+        .api-input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        .api-input-group button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .api-input-group button:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+        }
+
+        .api-input-group button:active {
+            transform: translateY(0);
+        }
+
+        .api-status {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #28a745;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .api-status.error {
+            color: #dc3545;
+        }
+
+        .api-status.hidden {
+            display: none;
+        }
+
+        .api-status i {
+            font-style: normal;
+            font-weight: 500;
+        }
+
+        .add-task-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .add-task-section h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .add-task-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .add-task-form input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 0.95em;
+            transition: all 0.3s;
+            min-width: 250px;
+        }
+
+        .add-task-form input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        .add-task-form button {
+            padding: 12px 30px;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-task-form button:hover {
+            background: #38a169;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(72,187,120,0.3);
+        }
+
+        .add-task-form button:active {
+            transform: translateY(0);
+        }
+
+        .tasks-section {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .tasks-header {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .tasks-header h2 {
+            color: #495057;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .tasks-header button {
+            padding: 8px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .tasks-header button:hover:not(:disabled) {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        .tasks-header button:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .tasks-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.2s;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .task-item:hover {
+            background: #f8f9fa;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .task-title {
+            font-size: 1em;
+            color: #2d3748;
+            transition: all 0.2s;
+            word-break: break-word;
+        }
+
+        .task-title.completed {
+            text-decoration: line-through;
+            color: #a0aec0;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .task-actions button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85em;
+        }
+
+        .task-actions .delete-btn {
+            background: #feb2b2;
+            color: #c53030;
+        }
+
+        .task-actions .delete-btn:hover {
+            background: #fc8181;
+            color: #9b2c2c;
+        }
+
+        .empty-tasks {
+            text-align: center;
+            padding: 40px 20px;
+            color: #718096;
+            font-style: italic;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-left: 8px;
+            border: 2px solid #667eea;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 30px;
+            color: #e53e3e;
+            background: #fff5f5;
+            border-radius: 8px;
+            margin: 20px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .content {
+                padding: 20px;
+            }
+
+            .api-input-group,
+            .add-task-form {
+                flex-direction: column;
+            }
+
+            .api-input-group button,
+            .add-task-form button {
+                width: 100%;
+            }
+
+            .task-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .task-content {
+                width: 100%;
+            }
+
+            .task-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Менеджер задач агентства</h1>
+            <p>Управляйте задачами вашей команды • Авторизация по API-ключу</p>
+        </div>
+
+        <div class="content">
+            <!-- Секция API ключа -->
+            <div class="api-section">
+                <label for="apiKey">🔑 API ключ авторизации</label>
+                <div class="api-input-group">
+                    <input
+                        type="text"
+                        id="apiKey"
+                        placeholder="Введите ваш API-ключ (например, user_12345)"
+                        value=""
+                    >
+                    <button id="saveApiKeyBtn">Сохранить ключ</button>
+                </div>
+                <div id="apiStatus" class="api-status hidden">
+                    <i>✓</i> <span></span>
+                </div>
+            </div>
+
+            <!-- Форма добавления задачи -->
+            <div class="add-task-section">
+                <h3>➕ Добавить новую задачу</h3>
+                <div class="add-task-form">
+                    <input
+                        type="text"
+                        id="newTaskInput"
+                        placeholder="Введите название задачи..."
+                        disabled
+                    >
+                    <button id="addTaskBtn" disabled>
+                        <span>+</span> Добавить
+                    </button>
+                </div>
+            </div>
+
+            <!-- Список задач -->
+            <div class="tasks-section">
+                <div class="tasks-header">
+                    <h2>📌 Список задач</h2>
+                    <button id="refreshTasksBtn" disabled>🔄 Обновить</button>
+                </div>
+
+                <!-- Контейнер для списка задач -->
+                <div id="tasksContainer">
+                    <div class="empty-tasks">
+                        🔐 Введите API-ключ и нажмите "Сохранить", чтобы загрузить задачи
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // app.js — встроен для удобства
+        (function() {
+            // ============================================
+            // TODO: Замените на адрес вашего API
+            const API_BASE_URL = 'http://your-server.com/api';
+            // ============================================
+
+            // Элементы DOM
+            const apiKeyInput = document.getElementById('apiKey');
+            const saveApiKeyBtn = document.getElementById('saveApiKeyBtn');
+            const apiStatus = document.getElementById('apiStatus');
+            const apiStatusSpan = apiStatus.querySelector('span');
+            const newTaskInput = document.getElementById('newTaskInput');
+            const addTaskBtn = document.getElementById('addTaskBtn');
+            const refreshTasksBtn = document.getElementById('refreshTasksBtn');
+            const tasksContainer = document.getElementById('tasksContainer');
+
+            // Состояние приложения
+            let currentApiKey = sessionStorage.getItem('todo_api_key') || '';
+
+            // Инициализация
+            function init() {
+                // Заполняем поле ввода, если ключ уже сохранен
+                if (currentApiKey) {
+                    apiKeyInput.value = currentApiKey;
+                    enableAuthenticatedFeatures(true);
+                    showApiStatus('Ключ загружен из сессии', false);
+                    loadTasks();
+                }
+
+                // Обработчики событий
+                saveApiKeyBtn.addEventListener('click', handleSaveApiKey);
+                addTaskBtn.addEventListener('click', handleAddTask);
+                refreshTasksBtn.addEventListener('click', () => loadTasks());
+
+                // Обработка Enter в полях ввода
+                apiKeyInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') handleSaveApiKey();
+                });
+
+                newTaskInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !addTaskBtn.disabled) handleAddTask();
+                });
+            }
+
+            // Сохранение API ключа
+            function handleSaveApiKey() {
+                const apiKey = apiKeyInput.value.trim();
+
+                if (!apiKey) {
+                    showApiStatus('Пожалуйста, введите API ключ', true);
+                    return;
+                }
+
+                // Сохраняем в sessionStorage
+                sessionStorage.setItem('todo_api_key', apiKey);
+                currentApiKey = apiKey;
+
+                // Активируем интерфейс
+                enableAuthenticatedFeatures(true);
+                showApiStatus('Ключ сохранен. Загружаем задачи...', false);
+
+                // Загружаем задачи
+                loadTasks();
+            }
+
+            // Включение/отключение функций для авторизованных пользователей
+            function enableAuthenticatedFeatures(enabled) {
+                newTaskInput.disabled = !enabled;
+                addTaskBtn.disabled = !enabled;
+                refreshTasksBtn.disabled = !enabled;
+
+                if (enabled) {
+                    newTaskInput.focus();
+                } else {
+                    newTaskInput.value = '';
+                }
+            }
+
+            // Показать статус API ключа
+            function showApiStatus(message, isError = false) {
+                apiStatusSpan.textContent = message;
+                apiStatus.classList.remove('hidden', 'error');
+
+                if (isError) {
+                    apiStatus.classList.add('error');
+                }
+            }
+
+            // Загрузка задач
+            async function loadTasks() {
+                if (!currentApiKey) {
+                    tasksContainer.innerHTML = '<div class="empty-tasks">🔐 Сначала сохраните API ключ</div>';
+                    return;
+                }
+
+                // Показываем загрузку
+                tasksContainer.innerHTML = '<div class="loading">Загрузка задач</div>';
+
+                try {
+                    const url = new URL(`${API_BASE_URL}/get_tasks`);
+                    url.searchParams.append('api_key', currentApiKey);
+
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ошибка ${response.status}`);
+                    }
+
+                    const tasks = await response.json();
+                    renderTasks(tasks);
+
+                } catch (error) {
+                    console.error('Ошибка загрузки задач:', error);
+
+                    // Для демонстрации показываем тестовые данные, если API недоступен
+                    if (API_BASE_URL === 'http://your-server.com/api') {
+                        showMockTasks();
+                    } else {
+                        tasksContainer.innerHTML = `
+                            <div class="error-message">
+                                ❌ Ошибка загрузки задач: ${error.message}<br>
+                                <small>Проверьте адрес API и доступность сервера</small>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            // Отрисовка задач
+            function renderTasks(tasks) {
+                if (!tasks || tasks.length === 0) {
+                    tasksContainer.innerHTML = '<div class="empty-tasks">✨ Нет задач. Создайте первую!</div>';
+                    return;
+                }
+
+                const tasksList = document.createElement('ul');
+                tasksList.className = 'tasks-list';
+
+                tasks.forEach(task => {
+                    const taskItem = document.createElement('li');
+                    taskItem.className = 'task-item';
+                    taskItem.dataset.id = task.id;
+
+                    // Формируем содержимое задачи
+                    taskItem.innerHTML = `
+                        <div class="task-content">
+                            <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
+                            <span class="task-title ${task.completed ? 'completed' : ''}">${escapeHtml(task.title)}</span>
+                        </div>
+                        <div class="task-actions">
+                            <button class="delete-btn" title="Удалить задачу">🗑️ Удалить</button>
+                        </div>
+                    `;
+
+                    // Обработчики для задачи
+                    const checkbox = taskItem.querySelector('.task-checkbox');
+                    const titleSpan = taskItem.querySelector('.task-title');
+                    const deleteBtn = taskItem.querySelector('.delete-btn');
+
+                    // Обработчик изменения статуса (чекбокс)
+                    checkbox.addEventListener('change', async () => {
+                        const completed = checkbox.checked;
+                        titleSpan.classList.toggle('completed', completed);
+
+                        try {
+                            await toggleTaskStatus(task.id, completed);
+                        } catch (error) {
+                            // В случае ошибки возвращаем чекбокс в прежнее состояние
+                            checkbox.checked = !completed;
+                            titleSpan.classList.toggle('completed', !completed);
+                            console.error('Ошибка обновления статуса:', error);
+                            alert('Не удалось обновить статус задачи');
+                        }
+                    });
+
+                    // Обработчик удаления задачи
+                    deleteBtn.addEventListener('click', async () => {
+                        if (confirm('Удалить задачу?')) {
+                            try {
+                                await deleteTask(task.id);
+                                taskItem.remove();
+
+                                // Если задач больше нет, показываем пустое состояние
+                                if (tasksContainer.querySelector('.tasks-list')?.children.length === 0) {
+                                    tasksContainer.innerHTML = '<div class="empty-tasks">✨ Нет задач. Создайте первую!</div>';
+                                }
+                            } catch (error) {
+                                console.error('Ошибка удаления задачи:', error);
+                                alert('Не удалось удалить задачу');
+                            }
+                        }
+                    });
+
+                    tasksList.appendChild(taskItem);
+                });
+
+                tasksContainer.innerHTML = '';
+                tasksContainer.appendChild(tasksList);
+            }
+
+            // Добавление новой задачи
+            async function handleAddTask() {
+                const title = newTaskInput.value.trim();
+
+                if (!title) {
+                    alert('Введите название задачи');
+                    return;
+                }
+
+                if (!currentApiKey) {
+                    alert('Сначала сохраните API ключ');
+                    return;
+                }
+
+                // Блокируем кнопку на время запроса
+                addTaskBtn.disabled = true;
+                const originalText = addTaskBtn.innerHTML;
+                addTaskBtn.innerHTML = '⏳ Добавление...';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/add_task`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            title: title,
+                            api_key: currentApiKey
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ошибка ${response.status}`);
+                    }
+
+                    const newTask = await response.json();
+
+                    // Очищаем поле ввода
+                    newTaskInput.value = '';
+
+                    // Перезагружаем задачи для получения актуального списка
+                    await loadTasks();
+
+                } catch (error) {
+                    console.error('Ошибка добавления задачи:', error);
+
+                    // Если API недоступен, имитируем успешное добавление
+                    if (API_BASE_URL === 'http://your-server.com/api') {
+                        alert('✅ Демо-режим: задача добавлена локально (API не настроен)');
+                        newTaskInput.value = '';
+
+                        // Создаем тестовую задачу
+                        const mockTask = {
+                            id: Date.now(),
+                            title: title,
+                            completed: false
+                        };
+
+                        // Добавляем в текущий список
+                        const currentTasks = tasksContainer.querySelector('.tasks-list');
+                        if (currentTasks) {
+                            const mockTasks = Array.from(currentTasks.children).map(item => ({
+                                id: item.dataset.id,
+                                title: item.querySelector('.task-title').textContent,
+                                completed: item.querySelector('.task-checkbox').checked
+                            }));
+                            mockTasks.push(mockTask);
+                            renderTasks(mockTasks);
+                        } else {
+                            renderTasks([mockTask]);
+                        }
+                    } else {
+                        alert(`Ошибка: ${error.message}`);
+                    }
+                } finally {
+                    addTaskBtn.disabled = false;
+                    addTaskBtn.innerHTML = originalText;
+                }
+            }
+
+            // Переключение статуса задачи
+            async function toggleTaskStatus(taskId, completed) {
+                if (!currentApiKey) return;
+
+                const response = await fetch(`${API_BASE_URL}/toggle_task/${taskId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        completed: completed,
+                        api_key: currentApiKey
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ошибка ${response.status}`);
+                }
+
+                return await response.json();
+            }
+
+            // Удаление задачи
+            async function deleteTask(taskId) {
+                if (!currentApiKey) return;
+
+                const url = new URL(`${API_BASE_URL}/delete_task/${taskId}`);
+                url.searchParams.append('api_key', currentApiKey);
+
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ошибка ${response.status}`);
+                }
+            }
+
+            // Демо-задачи для тестирования без API
+            function showMockTasks() {
+                const mockTasks = [
+                    { id: 1, title: 'Подготовить отчет по проекту A', completed: false },
+                    { id: 2, title: 'Созвониться с клиентом в 15:00', completed: true },
+                    { id: 3, title: 'Запланировать встречу команды', completed: false },
+                    { id: 4, title: 'Проверить почту', completed: false },
+                    { id: 5, title: 'Обновить документацию', completed: true }
+                ];
+
+                renderTasks(mockTasks);
+
+                // Показываем подсказку
+                const mockNotice = document.createElement('div');
+                mockNotice.style.padding = '10px 20px';
+                mockNotice.style.background = '#fefcbf';
+                mockNotice.style.color = '#744210';
+                mockNotice.style.fontSize = '0.9em';
+                mockNotice.style.textAlign = 'center';
+                mockNotice.style.borderBottom = '1px solid #faf089';
+                mockNotice.innerHTML = '⚡ Демо-режим: показаны тестовые задачи. Настройте API для реальной работы.';
+
+                tasksContainer.prepend(mockNotice);
+            }
+
+            // Экранирование HTML для безопасности
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // Запуск инициализации после загрузки DOM
+            document.addEventListener('DOMContentLoaded', init);
+        })();
+    </script>
+</body>
+</html>
